@@ -14,9 +14,7 @@ class misp::dependencies inherits misp {
     'php-pear-crypt-gpg', # Crypto GPG 
     'python-magic', # Advance attachment handler
     'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
-  ],
-    { 'ensure' => 'present' }
-  )
+  ] )
 
   if $misp::manage_python {
     class { 'python' :
