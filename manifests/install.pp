@@ -62,7 +62,7 @@ class misp::install inherits misp {
   }
 
   exec {'python-cybox config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python setup.py install',
+    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-cybox/",
     unless      => '/usr/bin/pip list | grep cybox',
     umask       => '0022',
@@ -71,7 +71,7 @@ class misp::install inherits misp {
   }
 
   exec {'python-stix config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python setup.py install',
+    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-stix/",
     unless      => '/usr/bin/pip list | grep stix',
     umask       => '0022',
@@ -80,7 +80,7 @@ class misp::install inherits misp {
   }
 
   exec {'mixbox config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python setup.py install',
+    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/mixbox/",
     unless      => '/usr/bin/pip list | grep mixbox',
     umask       => '0022',
@@ -89,7 +89,7 @@ class misp::install inherits misp {
   }
 
   exec {'python-maec config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python setup.py install',
+    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-maec/",
     unless      => '/usr/bin/pip list | grep maec',
     umask       => '0022',
@@ -98,7 +98,7 @@ class misp::install inherits misp {
   }
 
   exec {'pydeep build':
-    command     => '/usr/bin/python setup.py build && /usr/bin/python setup.py install',
+    command     => '/usr/bin/python3.6 setup.py build && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/pydeep/",
     unless      => '/usr/bin/pip list | grep pydeep',
     umask       => '0022',
