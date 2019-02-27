@@ -1,4 +1,3 @@
-
 class misp::config inherits misp {
 
   require '::misp::install'
@@ -106,6 +105,7 @@ class misp::config inherits misp {
     owner     => $misp::default_user,
     group     => $misp::default_group,
     content   => template('misp/config.php.erb'),
+    replace   => !$misp::allow_config_changes,
     seltype   => 'httpd_sys_rw_content_t',
     subscribe => Exec['Directory permissions'],
   }

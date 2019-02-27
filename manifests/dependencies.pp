@@ -1,42 +1,47 @@
-
 class misp::dependencies inherits misp {
-
   ensure_packages( [
-    'gcc', # Needed for compiling Python modules
-    'git', # Needed for pulling the MISP code and those for some dependencies
-    'zip', 'mariadb',
-    'python-lxml', 'python-dateutil', 'python-six', 'python-zmq', # Python related packages
-    'libxslt-devel', 'zlib-devel',
-    'rh-php56', 'rh-php56-php-fpm', 'rh-php56-php-devel', 'rh-php56-php-mysqlnd', 'rh-php56-php-mbstring', 'php-pear', 'rh-php56-php-xml', 'rh-php56-php-bcmath', # PHP related packages
-    'php-mbstring', #Required for Crypt_GPG
-    'haveged',
-    'sclo-php56-php-pecl-redis', # Redis connection from PHP
-    'php-pear-crypt-gpg', # Crypto GPG 
-    'python-magic', # Advance attachment handler
-    'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
+      'gcc', # Needed for compiling Python modules
+      'git', # Needed for pulling the MISP code and those for some dependencies
+      'zip', 'mariadb',
+      'libxslt-devel', 'zlib-devel',
+      'php-mbstring', #Required for Crypt_GPG
+      'php-pear-crypt-gpg', # Crypto GPG
+      'python36-pip',
+      'python36-six', # Python related packages
+      'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
+
+      "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel", "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", 'php-pear', "rh-${misp::php_version}-php-xml", "rh-${misp::php_version}-php-bcmath", # PHP related packages
+      "sclo-${misp::php_version}-php-pecl-redis", # Redis connection from PHP
   ] )
 
+  ensure_packages( [
+      'python-magic',
+      'lxml', 'python-dateutil', 'zmq'
+    ], {
+      provider => 'pip3',
+  })
+
   if $misp::manage_python {
-    class { 'python' :
+    class { '::python' :
       version => 'system',
       pip     => 'present',
       dev     => 'present',
     }
   }
+  if $misp::manage_haveged {
+    ensure_packages( ['haveged'] )
+  }
 
   if $misp::pymisp_rpm {
-    ensure_packages( ['pymisp'],
-      { 'ensure' => 'present' }
-    )
+    ensure_packages( ['pymisp'] )
   } else {
-    python::pip { 'pymisp' :
-      pkgname => 'pymisp',
-    }
+    ensure_packages( ['pymisp'], {
+        'ensure'   => 'present',
+        'provider' => 'pip3',
+    })
   }
 
   if $misp::lief {
-    ensure_packages( [$misp::lief_package_name],
-      { 'ensure' => 'present' }
-    )
+    ensure_packages( [$misp::lief_package_name] )
   }
 }

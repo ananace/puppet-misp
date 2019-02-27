@@ -1,4 +1,3 @@
-
 class misp::install inherits misp {
 
   require '::misp::dependencies'
@@ -109,14 +108,14 @@ class misp::install inherits misp {
 
   # CakePHP
 
-  exec {'CakeResque curl':
-    command     => '/usr/bin/curl -s https://getcomposer.org/installer | php',
-    cwd         => "${misp::install_dir}/app/",
-    environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
-    refreshonly => true,
-    notify      => Exec['CakeResque kamisama'],
-    subscribe   => Exec['git ignore permissions'],
-  }
+  # exec {'CakeResque curl':
+  #   command     => '/usr/bin/curl -s https://getcomposer.org/installer | php',
+  #   cwd         => "${misp::install_dir}/app/",
+  #   environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
+  #   refreshonly => true,
+  #   notify      => Exec['CakeResque kamisama'],
+  #   subscribe   => Exec['git ignore permissions'],
+  # }
 
   exec {'CakeResque kamisama':
     command     => '/usr/bin/php composer.phar require kamisama/cake-resque:4.1.2',
@@ -142,26 +141,26 @@ class misp::install inherits misp {
     notify      => File['/etc/opt/rh/rh-php56/php-fpm.d/redis.ini', '/etc/opt/rh/rh-php56/php-fpm.d/timezone.ini'],
   }
 
-  file {'/etc/opt/rh/rh-php56/php-fpm.d/redis.ini':
+  file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
     ensure  => file,
     content => 'extension=redis.so',
   }
 
-  file {'/etc/opt/rh/rh-php56/php.d/99-redis.ini':
+  file { "/etc/opt/rh/rh-${misp::php_version}/php.d/99-redis.ini":
     ensure    => link,
     target    => '/etc/opt/rh/rh-php56/php-fpm.d/redis.ini',
     subscribe => File['/etc/opt/rh/rh-php56/php-fpm.d/redis.ini'],
   }
 
-  file {'/etc/opt/rh/rh-php56/php-fpm.d/timezone.ini':
+  file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini":
     ensure  => file,
     content => "date.timezone = '${misp::timezone}'",
   }
 
-  file {'/etc/opt/rh/rh-php56/php.d/99-timezone.ini':
+  file { "/etc/opt/rh/rh-${misp::php_version}/php.d/99-timezone.ini":
     ensure    => link,
-    target    => '/etc/opt/rh/rh-php56/php-fpm.d/timezone.ini',
-    subscribe => File['/etc/opt/rh/rh-php56/php-fpm.d/timezone.ini'],
+    target    => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini",
+    subscribe => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"],
   }
 
   #File cration for managing workers
