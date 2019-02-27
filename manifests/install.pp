@@ -64,7 +64,7 @@ class misp::install inherits misp {
   exec {'python-cybox config':
     command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-cybox/",
-    unless      => '/usr/bin/pip list | grep cybox',
+    unless      => '/usr/bin/pip3.6 list | grep cybox',
     umask       => '0022',
     refreshonly => true,
     subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"],
@@ -73,7 +73,7 @@ class misp::install inherits misp {
   exec {'python-stix config':
     command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-stix/",
-    unless      => '/usr/bin/pip list | grep stix',
+    unless      => '/usr/bin/pip3.6 list | grep stix',
     umask       => '0022',
     refreshonly => true,
     subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"],
@@ -82,7 +82,7 @@ class misp::install inherits misp {
   exec {'mixbox config':
     command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/mixbox/",
-    unless      => '/usr/bin/pip list | grep mixbox',
+    unless      => '/usr/bin/pip3.6 list | grep mixbox',
     umask       => '0022',
     refreshonly => true,
     subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"],
@@ -91,7 +91,7 @@ class misp::install inherits misp {
   exec {'python-maec config':
     command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/python-maec/",
-    unless      => '/usr/bin/pip list | grep maec',
+    unless      => '/usr/bin/pip3.6 list | grep maec',
     umask       => '0022',
     refreshonly => true,
     subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"],
@@ -100,7 +100,7 @@ class misp::install inherits misp {
   exec {'pydeep build':
     command     => '/usr/bin/python3.6 setup.py build && /usr/bin/python3.6 setup.py install',
     cwd         => "${misp::install_dir}/app/files/scripts/pydeep/",
-    unless      => '/usr/bin/pip list | grep pydeep',
+    unless      => '/usr/bin/pip3.6 list | grep pydeep',
     umask       => '0022',
     refreshonly => true,
     subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"],
