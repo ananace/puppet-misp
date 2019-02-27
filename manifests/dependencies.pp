@@ -22,6 +22,13 @@ class misp::dependencies inherits misp {
 
   if $misp::manage_python {
     ensure_packages( ['python36', 'python36-pip'] )
+    if !defined(File['/usr/bin/pip3']) {
+      file { '/usr/bin/pip3':
+        ensure  => link,
+        target  => '/usr/bin/pip3.6',
+        replace => false,
+      }
+    }
   }
   if $misp::manage_haveged {
     ensure_packages( ['haveged'] )
