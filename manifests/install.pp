@@ -138,7 +138,7 @@ class misp::install inherits misp {
     cwd         => "${misp::install_dir}/app/",
     environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
     refreshonly => true,
-    notify      => File['/etc/opt/rh/rh-php56/php-fpm.d/redis.ini', '/etc/opt/rh/rh-php56/php-fpm.d/timezone.ini'],
+    notify      => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini", "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"],
   }
 
   file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
