@@ -9,14 +9,14 @@ class misp::config inherits misp {
     owner     => $misp::default_high_user,
     group     => $misp::default_high_group,
     source    => "file://${misp::install_dir}/INSTALL/setup/config.php",
-    subscribe => Exec['CakeResque install'],
+    subscribe => Exec['CakeResque require'],
   }
 
   exec {'Directory permissions':
     command     => "/usr/bin/chown -R ${misp::default_high_user}:${misp::default_high_group} ${misp::install_dir} && /usr/bin/find ${misp::install_dir} -type d -exec /usr/bin/chmod g=rx {} \\; && /usr/bin/chmod -R g+r,o= ${misp::install_dir}",
     refreshonly => true,
     require     => File["${misp::install_dir}/app/Plugin/CakeResque/Config/config.php"],
-    subscribe   => Exec['CakeResque install'],
+    subscribe   => Exec['CakeResque require'],
   }
 
   file {"${misp::install_dir}/app/files" :
@@ -100,14 +100,25 @@ class misp::config inherits misp {
     subscribe => Exec['Directory permissions'],
   }
 
-  file{"${misp::config_dir}/config.php":
-    ensure    => file,
-    owner     => $misp::default_user,
-    group     => $misp::default_group,
-    content   => template('misp/config.php.erb'),
-    replace   => !$misp::allow_config_changes,
-    seltype   => 'httpd_sys_rw_content_t',
-    subscribe => Exec['Directory permissions'],
+  if $mips::allow_config_changes {
+    file{"${misp::config_dir}/config.php":
+      ensure    => file,
+      owner     => $misp::default_user,
+      group     => $misp::default_group,
+      content   => template('misp/config.php.erb'),
+      replace   => false,
+      seltype   => 'httpd_sys_rw_content_t',
+      subscribe => Exec['Directory permissions'],
+    }
+  } else {
+    file{"${misp::config_dir}/config.php":
+      ensure    => file,
+      owner     => $misp::default_high_user,
+      group     => $misp::default_high_group,
+      mode      => '0640',
+      content   => template('misp/config.php.erb'),
+      subscribe => Exec['Directory permissions'],
+    }
   }
 
   if fact('os.selinux.enabled') {

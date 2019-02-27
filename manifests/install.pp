@@ -2,7 +2,9 @@ class misp::install inherits misp {
 
   require '::misp::dependencies'
 
-  # MISP
+
+  ## MISP
+  #
 
   vcsrepo { $misp::install_dir:
     ensure     => present,
@@ -24,92 +26,74 @@ class misp::install inherits misp {
     notify      => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox","${misp::install_dir}/app/files/scripts/python-stix", "${misp::install_dir}/app/files/scripts/mixbox", "${misp::install_dir}/app/files/scripts/python-maec", "${misp::install_dir}/app/files/scripts/pydeep"],
   }
 
-  vcsrepo { "${misp::install_dir}/app/files/scripts/python-cybox":
-    ensure   => present,
-    provider => git,
-    force    => false,
-    source   => $misp::cybox_git_repo,
-    revision => $misp::cybox_git_tag,
+
+  ## Python plugins
+  #
+
+  vcsrepo {
+    default:
+      ensure   => present,
+      provider => git,
+      force    => false;
+
+    "${misp::install_dir}/app/files/scripts/python-cybox":
+      source   => $misp::cybox_git_repo,
+      revision => $misp::cybox_git_tag;
+
+    "${misp::install_dir}/app/files/scripts/python-stix":
+      source   => $misp::stix_git_repo,
+      revision => $misp::stix_git_tag;
+
+    "${misp::install_dir}/app/files/scripts/mixbox":
+      source   => $misp::mixbox_git_repo,
+      revision => $misp::mixbox_git_tag;
+
+    "${misp::install_dir}/app/files/scripts/python-maec":
+      source   => $misp::maec_git_repo,
+      revision => $misp::maec_git_tag;
+
+    "${misp::install_dir}/app/files/scripts/pydeep":
+      source   => $misp::pydeep_git_repo,
+      revision => $misp::pydeep_git_tag;
   }
 
-  vcsrepo { "${misp::install_dir}/app/files/scripts/python-stix":
-    ensure   => present,
-    provider => git,
-    force    => false,
-    source   => $misp::stix_git_repo,
-    revision => $misp::stix_git_tag,
+  exec {
+    default:
+      command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
+      umask       => '0022',
+      refreshonly => true;
+
+    'python-cybox config':
+      cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
+      unless    => '/usr/bin/pip3.6 list | grep cybox',
+      subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
+
+    'python-stix config':
+      cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
+      unless    => '/usr/bin/pip3.6 list | grep stix',
+      subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
+
+    'mixbox config':
+      cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
+      unless    => '/usr/bin/pip3.6 list | grep mixbox',
+      subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
+
+    'python-maec config':
+      cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
+      unless    => '/usr/bin/pip3.6 list | grep maec',
+      subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
+
+    'pydeep build':
+      command   => '/usr/bin/python3.6 setup.py build && /usr/bin/python3.6 setup.py install',
+      cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
+      unless    => '/usr/bin/pip3.6 list | grep pydeep',
+      subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 
-  vcsrepo { "${misp::install_dir}/app/files/scripts/mixbox":
-    ensure   => present,
-    provider => git,
-    force    => false,
-    source   => $misp::mixbox_git_repo,
-    revision => $misp::mixbox_git_tag,
-  }
 
-  vcsrepo { "${misp::install_dir}/app/files/scripts/python-maec":
-    ensure   => present,
-    provider => git,
-    force    => false,
-    source   => $misp::maec_git_repo,
-    revision => $misp::maec_git_tag,
-  }
+  ## CakePHP
+  #
 
-  vcsrepo { "${misp::install_dir}/app/files/scripts/pydeep":
-    ensure   => present,
-    provider => git,
-    force    => false,
-    source   => $misp::pydeep_git_repo,
-    revision => $misp::pydeep_git_tag,
-  }
-
-  exec {'python-cybox config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
-    cwd         => "${misp::install_dir}/app/files/scripts/python-cybox/",
-    unless      => '/usr/bin/pip3.6 list | grep cybox',
-    umask       => '0022',
-    refreshonly => true,
-    subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"],
-  }
-
-  exec {'python-stix config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
-    cwd         => "${misp::install_dir}/app/files/scripts/python-stix/",
-    unless      => '/usr/bin/pip3.6 list | grep stix',
-    umask       => '0022',
-    refreshonly => true,
-    subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"],
-  }
-
-  exec {'mixbox config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
-    cwd         => "${misp::install_dir}/app/files/scripts/mixbox/",
-    unless      => '/usr/bin/pip3.6 list | grep mixbox',
-    umask       => '0022',
-    refreshonly => true,
-    subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"],
-  }
-
-  exec {'python-maec config':
-    command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
-    cwd         => "${misp::install_dir}/app/files/scripts/python-maec/",
-    unless      => '/usr/bin/pip3.6 list | grep maec',
-    umask       => '0022',
-    refreshonly => true,
-    subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"],
-  }
-
-  exec {'pydeep build':
-    command     => '/usr/bin/python3.6 setup.py build && /usr/bin/python3.6 setup.py install',
-    cwd         => "${misp::install_dir}/app/files/scripts/pydeep/",
-    unless      => '/usr/bin/pip3.6 list | grep pydeep',
-    umask       => '0022',
-    refreshonly => true,
-    subscribe   => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"],
-  }
-
-  # CakePHP
   file { '/usr/share/httpd/.composer':
     ensure => directory,
     owner  => apache,
