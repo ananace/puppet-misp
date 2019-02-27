@@ -6,7 +6,6 @@ class misp::dependencies inherits misp {
       'libxslt-devel', 'zlib-devel',
       'php-mbstring', #Required for Crypt_GPG
       'php-pear-crypt-gpg', # Crypto GPG
-      'python36-pip',
       'python36-six', # Python related packages
       'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
 
@@ -22,11 +21,7 @@ class misp::dependencies inherits misp {
   })
 
   if $misp::manage_python {
-    class { '::python' :
-      version => 'system',
-      pip     => 'present',
-      dev     => 'present',
-    }
+    ensure_packages( ['python36', 'python36-pip'] )
   }
   if $misp::manage_haveged {
     ensure_packages( ['haveged'] )
