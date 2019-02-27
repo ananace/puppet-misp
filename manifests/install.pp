@@ -148,8 +148,8 @@ class misp::install inherits misp {
 
   file { "/etc/opt/rh/rh-${misp::php_version}/php.d/99-redis.ini":
     ensure    => link,
-    target    => '/etc/opt/rh/rh-php56/php-fpm.d/redis.ini',
-    subscribe => File['/etc/opt/rh/rh-php56/php-fpm.d/redis.ini'],
+    target    => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini",
+    subscribe => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini"],
   }
 
   file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini":
