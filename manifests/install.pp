@@ -11,6 +11,9 @@ class misp::install inherits misp {
     force      => false,
     source     => $misp::misp_git_repo,
     revision   => $misp::misp_git_tag,
+    owner      => $misp::default_user,
+    group      => $misp::default_group,
+    notify     => Exec['CakeResque require'],
   }
 
   exec {'git ignore permissions':
@@ -107,38 +110,30 @@ class misp::install inherits misp {
   }
 
   # CakePHP
-
-  # exec {'CakeResque curl':
-  #   command     => '/usr/bin/curl -s https://getcomposer.org/installer | php',
-  #   cwd         => "${misp::install_dir}/app/",
-  #   environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
-  #   refreshonly => true,
-  #   notify      => Exec['CakeResque kamisama'],
-  #   subscribe   => Exec['git ignore permissions'],
-  # }
-
-  exec {'CakeResque kamisama':
-    command     => '/usr/bin/php composer.phar require kamisama/cake-resque:4.1.2',
-    cwd         => "${misp::install_dir}/app/",
-    environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
-    refreshonly => true,
-    notify      => Exec['CakeResque config'],
+  file { '/usr/share/httpd/.composer':
+    ensure => directory,
+    owner  => apache,
+    group  => apache,
   }
 
-  exec {'CakeResque config':
-    command     => '/usr/bin/php composer.phar config vendor-dir Vendor',
-    cwd         => "${misp::install_dir}/app/",
-    environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
-    refreshonly => true,
-    notify      => Exec['CakeResque install'],
-  }
+  exec {
+    default:
+      cwd         => "${misp::install_dir}/app/",
+      environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
+      user        => 'apache',
+      refreshonly => true;
 
-  exec {'CakeResque install':
-    command     => '/usr/bin/php composer.phar install',
-    cwd         => "${misp::install_dir}/app/",
-    environment => ["COMPOSER_HOME=${misp::install_dir}/app/"],
-    refreshonly => true,
-    notify      => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini", "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"],
+    'CakeResque require':
+      command => '/usr/bin/scl enable rh-php71 "php composer.phar require kamisama/cake-resque:4.1.2"',
+      notify  => Exec['CakeResque config'];
+
+    'CakeResque config':
+      command => '/usr/bin/scl enable rh-php71 "php composer.phar config vendor-dir Vendor"',
+      notify  => Exec['CakeResque install'];
+
+    'CakeResque install':
+      command => '/usr/bin/scl enable rh-php71 "php composer.phar install"',
+      notify  => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini", "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"];
   }
 
   file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
