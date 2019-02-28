@@ -41,15 +41,8 @@ class misp (
   String $db_host = 'localhost',
   String $db_port = '3306',
   String $db_password = '',
-  # # Redis DB
-  String $redis_host = '127.0.0.1',
-  Integer[1,65535] $redis_port = 6379,
-  Integer $redis_database = 13,
-  Optional[String] $redis_password = undef,
-  # # config.php
-  Integer $debug = 0,
-  Boolean $site_admin_debug = false,
-  # # MISP puppet configuration
+
+  ## MISP puppet configuration
   Stdlib::Unixpath $install_dir = '/var/www/MISP/',
   Stdlib::Unixpath $config_dir = '/var/www/MISP/app/Config/',
   String $timezone = 'UTC',
@@ -57,118 +50,167 @@ class misp (
   String $default_group = 'apache',
   String $default_high_user = 'root',
   String $default_high_group = 'apache',
-  # # Security
+
+  ### config.php
+  Integer $debug = 0,
+  Boolean $site_admin_debug = false,
+
+  ## Security section
+  # (critical)
   String $security_level = 'medium',
   String $salt = 'Rooraenietu8Eeyo<Qu2eeNfterd-dd+',
   String $cipherseed = '',
-  Optional[String] $auth_method = undef,# Empty means default user-password login method
+  Optional[Variant[String, Array[String]]] $auth_method = undef,# Empty means default user-password login method
   Integer $password_policy_length = 6,
   String $password_policy_complexity = '/((?=.*\\d)|(?=.*\\W+))(?![\\n])(?=.*[A-Z])(?=.*[a-z]).*$/',
   Boolean $sanitise_attribute_on_delete = false,
   Boolean $require_password_confirmation = false,
   Boolean $hide_organisation_index_from_users = false,
-  # # MISP parameters
-  Integer $uuid = 0,
-  Boolean $live = true,
-  String $language = 'eng',
-  Boolean $enable_advanced_correlations = false,
-  Integer $ssdeep_correlation_threshold = 40,
-  Integer $max_correlations_per_event = 5000,
-  String $maintenance_message = 'Great things are happening! MISP is undergoing maintenance, but will return shortly. You can contact the administration at \\$email.',
+
+  ## MISP section
+  # (critical)
+  Optional[String] $baseurl = "https://${fact('networking.fqdn')}",
+  Optional[Boolean] $live = undef,
+  Optional[String] $language = undef,
+  Optional[Boolean] $enable_advanced_correlations = undef,
+  Optional[String] $uuid = undef, # UUID type
+  Optional[Boolean] $showorg = undef,
+  Optional[String] $email = "root@${fact('networking.fqdn')}",
+  Optional[Boolean] $disable_emailing = undef,
+  Optional[Integer[0,3]] $default_event_distribution = undef,
+  Optional[Variant[Integer[0,3],'event']] $default_attribute_distribution = undef,
+  Optional[Array] $default_event_tag_collection = undef,
+  Optional[Boolean] $proposals_block_attributes = undef,
+  Optional[Boolean] $completely_disable_correlation = undef,
+  Optional[Boolean] $allow_disabling_correlation = undef,
+  #   Redis DB
+  String $redis_host = '127.0.0.1',
+  Integer[1,65535] $redis_port = 6379,
+  Integer $redis_database = 13,
+  Optional[String] $redis_password = undef,
+  # (recommended)
+  Optional[Stdlib::Unixpath] $python_bin = undef,
+  Optional[Boolean] $disable_auto_logout = undef,
+  Optional[Integer[1,100]] $ssdeep_correlation_threshold = undef,
+  Optional[Integer] $max_correlations_per_event = undef,
+  Optional[Boolean] $disable_cached_exports = undef,
+  Optional[String] $org = undef,
+  Optional[Boolean] $background_jobs = undef,
+  Optional[Boolean] $cached_attachments = undef,
+  Optional[String] $contact = undef,
+  Optional[Stdlib::HTTPUrl] $cveurl = undef,
+  Optional[Boolean] $disablerestalert = undef,
+  Optional[Boolean] $extended_alert_subject = undef,
+  Optional[Integer[1,4]] $default_event_threat_level = undef,
+  Optional[Boolean] $tagging = undef,
+  Optional[String] $new_user_text = undef,
+  Optional[String] $password_reset_text = undef,
+  Optional[Boolean] $enable_event_blacklisting = undef,
+  Optional[Boolean] $log_client_ip = undef,
+  Optional[Boolean] $log_auth = undef,
+  Optional[Boolean] $delegation = undef,
+  Optional[Boolean] $show_correlations_on_index = undef,
+  Optional[Boolean] $show_proposals_count_on_index = undef,
+  Optional[Boolean] $show_sightings_count_on_index = undef,
+  Optional[Boolean] $show_discussions_count_on_index = undef,
+  Optional[Boolean] $disable_user_self_management = undef,
+  Optional[Boolean] $block_event_alert = undef,
+  Optional[String] $block_event_alert_tag = undef,
+  Optional[Boolean] $block_old_event_alert = undef,
+  Optional[Integer] $block_old_event_alert_age = undef,
+  Optional[Stdlib::Unixpath] $tmpdir = undef,
+  Optional[Boolean] $incoming_tags_disabled_by_default = undef,
+  Optional[Boolean] $deadlock_avoidance = undef,
+  # (optional)
+  Optional[String] $maintenance_message = undef,
   Optional[String] $footermidleft = undef,
   Optional[String] $footermidright = undef,
   Optional[String] $footer_logo = undef,
   Optional[String] $home_logo = undef,
   Optional[String] $main_logo = undef,
-  String $org = 'ORGNAME',
+  Optional[Boolean] $threatlevel_in_email_subject = undef,
+  Optional[String] $email_subject_tlp_string = undef,
+  Optional[String] $email_subject_tag = undef,
+  Optional[Boolean] $email_subject_include_tag_name = undef,
+  Optional[String] $attachments_dir = undef,
+  Optional[Boolean] $download_attachments_on_load = undef,
+  Optional[Integer[0,2]] $full_tags_on_event_index = undef,
+  Optional[String] $welcome_text_top = undef,
+  Optional[String] $welcome_text_bottom = undef,
+  Optional[String] $welcome_logo = undef,
+  Optional[String] $welcome_logo2 = undef,
+  Optional[String] $title_text = undef,
+  Optional[Boolean] $take_ownership_xml_import = undef,
+  Optional[Boolean] $terms_download = undef,
+  Optional[String] $terms_file = undef,
+  Optional[Boolean] $showorgalternate = undef,
+  Optional[Boolean] $unpublishedprivate = undef,
+  Optional[String] $custom_css = undef,
+  Optional[String] $event_view_filter_fields = undef,
+  Optional[Boolean] $manage_workers = undef,
+
+  ## GnuPG section
+  # (critical)
+  Optional[Boolean] $gpg_onlyencrypted = undef,
+  Optional[String] $gpg_email = undef,
+  Optional[Stdlib::Unixpath] $gpg_homedir = undef,
+  # (recommended)
+  Optional[String] $gpg_password = undef,
+  # (optional)
+  Optional[Stdlib::Unixpath] $gpg_binary = undef,
+  Optional[Boolean] $gpg_bodyonlyencrypted = undef,
+  Optional[Boolean] $gpg_sign = undef,
+
+  ## SMIME section
+  # (optional)
+  Optional[Boolean] $smime_enabled = undef,
+  Optional[String] $smime_email = undef,
+  Optional[Stdlib::Unixpath] $smime_cert_public_sign = undef,
+  Optional[Stdlib::Unixpath] $smime_key_sign = undef,
+  Optional[String] $smime_password = undef,
+
+  ## Proxy section
+  # (optional)
+  Optional[String] $proxy_host = undef,
+  Optional[Integer] $proxy_port = undef,
+  Optional[Enum['Basic','Digest']] $proxy_method = undef,
+  Optional[String] $proxy_user = undef,
+  Optional[String] $proxy_password = undef,
+
+  ## Security section
+  # (critical)
+  Optional[Boolean] $security_syslog = undef,
+  Optional[Boolean] $security_allow_unsafe_apikey_named_param = undef,
+  # (recommended)
+  Optional[Boolean] $security_require_password_confirmation = undef,
+  Optional[Boolean] $security_sanitise_attribute_on_delete = undef,
+  Optional[Boolean] $security_hide_organisation_index_from_users = undef,
+  # (optional)
+  Optional[Boolean] $security_password_policy_length = undef,
+  Optional[String] $security_password_policy_complexity = undef,
+
+  ## SecureAuth section
+  # (critical)
+  Optional[Integer] $secure_auth_amount = undef,
+  Optional[Integer] $secure_auth_expire = undef,
+
+  ## Session section
+  # (critical)
+  Optional[Boolean] $session_auto_regenerate = undef,
+  Optional[Boolean] $session_check_agent = undef,
+  Optional[Enum['php','database','cake','cache']] $session_defaults = undef,
+  Optional[Integer] $session_timeout = undef,
+  Optional[Integer] $session_cookie_timeout = undef,
+
+
   String $host_org_id = '1',
-  Boolean $showorg = true,
-  Boolean $threatlevel_in_email_subject = true,
-  String $email_subject_tlp_string = 'TLP Amber',
-  String $email_subject_tag = 'tlp',
-  Boolean $email_subject_include_tag_name = true,
-  Boolean $background_jobs = true,
-  String $attachments_dir = 'app/files',
-  Boolean $cached_attachments = true,
-  Boolean $download_attachments_on_load = true,
-  String $email = 'root@localhost',# This address is used as sender (from) when sending notifications
-  Boolean $disable_emailing = false,
-  String $contact = 'root@localhost',# This address is used in error messages
-  String $cveurl = 'http://cve.circl.lu/cve/',
-  Boolean $disablerestalert = false,
-  Boolean $extended_alert_subject = true,
-  String $default_event_distribution = '1',
-  String $default_attribute_distribution = 'event',
-  String $default_event_threat_level = '1',
-  Boolean $tagging = true,
-  Boolean $full_tags_on_event_index = true,
-  String $welcome_text_top = '',
-  String $welcome_text_bottom = '',
-  String $welcome_logo = '',
-  String $welcome_logo2 = '',
-  String $title_text = 'MISP',
-  Boolean $take_ownership_xml_import = false,
-  Boolean $terms_download = false,
-  String $terms_file = '',
-  Boolean $showorgalternate = false,
-  Boolean $unpublishedprivate = false,
-  String $new_user_text = 'Dear new MISP user,\\n\\nWe would hereby like to welcome you to the \\$org MISP community.\\n\\n Use the credentials below to log into MISP at \\$misp, where you will be prompted to manually change your password to something of your own choice.\\n\\nUsername: \\$username\\nPassword: \\$password\\n\\nIf you have any questions, don\'t hesitate to contact us at: \\$contact.\\n\\nBest regards,\\nYour \\$org MISP support team',
-  String $password_reset_text = 'Dear MISP user,\\n\\nA password reset has been triggered for your account. Use the below provided temporary password to log into MISP at \\$misp, where you will be prompted to manually change your password to something of your own choice.\\n\\nUsername: \\$username\\nYour temporary password: \\$password\\n\\nIf you have any questions, don\'t hesitate to contact us at: \\$contact.\\n\\nBest regards,\\nYour \\$org MISP support team',
-  Boolean $enable_event_blacklisting = true,
   Boolean $enable_org_blacklisting = true,
-  Boolean $log_client_ip = true,
-  Boolean $log_auth = false,
   Boolean $mangle_push_to_23 = false,  # Advised against, FALSE
-  Boolean $delegation = false,
-  Boolean $show_correlations_on_index = false,
-  Boolean $show_proposals_count_on_index = false,
-  Boolean $show_sightings_count_on_index =  false,
-  Boolean $show_discussions_count_on_index =  false,
-  Boolean $disable_user_self_management = false,
-  Boolean $block_event_alert = false,
-  String $block_event_alert_tag = 'no-alerts="true"',
-  Boolean $block_old_event_alert = false,
-  Integer $block_old_event_alert_age = 30,
   Boolean $rh_shell_fix = false,
   String $rh_shell_fix_path = '/opt/rh/rh-php56/root/usr/bin:/opt/rh/rh-php56/root/usr/sbin',
-  String $tmpdir = '/tmp',
-  String $custom_css = '',
-  Boolean $proposals_block_attributes = true,
-  Boolean $incoming_tags_disabled_by_default = false,
-  Boolean $completely_disable_correlation = false,
-  Boolean $allow_disabling_correlation = false,
-  String $event_view_filter_fields = 'id, uuid, value, comment, type, category, Tag.name',
-  Boolean $manage_workers = true,
-  Boolean $deadlock_avoidance = false,
-  Boolean $allow_unsafe_apikey_named_param = false,
-  # # GPG
-  Stdlib::Unixpath $gpg_binary = '/usr/bin/gpg',
-  Boolean $gpg_onlyencrypted = false,
-  String $gpg_email = 'no-reply@localhost',
-  Stdlib::Unixpath $gpg_homedir = '/var/www/MISP/',
-  String $gpg_password = '',
-  Boolean $gpg_bodyonlyencrypted = false,
-  # # SMIME
-  Boolean $smime_enabled = false,
-  String $smime_email = '',
-  String $smime_cert_public_sign = '',
-  String $smime_key_sign = '',
-  String $smime_password = '',
-  # # Proxy
-  String $proxy_host = '',
-  String $proxy_port = '',
-  String $proxy_method = '',
-  String $proxy_user = '',
-  String $proxy_password = '',
+
   # # SecureAuth
-  Integer $secure_auth_amount = 5,
-  Integer $secure_auth_expire = 300,
   # # Session
-  Boolean $session_auto_regenerate = true,
-  Boolean $session_check_agent = false,
-  String $session_defaults = 'php',
-  String $session_timeout = '60',
-  Integer $session_cookie_timeout = 1440,
   # # Plugin
   Integer $rpz_policy = 0,
   String $rpz_walled_garden = '127.0.0.1',
