@@ -7,7 +7,7 @@ $config = array (
      'level' => '<%= @security_level -%>',
      'salt' => '<%= @salt -%>',
      'cipherSeed' => '<%= @cipherseed -%>',
-     <% if (@auth_method != '') then %>
+     <% if @auth_method then %>
      'auth'=>array('<%= @auth_method -%>'),
      <% else %>
      //'auth'=>array('CertAuth.Certificate'), // additional  authentication methods
