@@ -139,8 +139,8 @@
 
   ## SecureAuth section
   # (critical)
-  Optional[Integer] $secure_auth_amount = undef,
-  Optional[Integer] $secure_auth_expire = undef,
+  Integer $secure_auth_amount,
+  Integer $secure_auth_expire,
 
   ## Session section
   # (critical)
@@ -480,12 +480,8 @@ $config = array (
     ),
   'SecureAuth' =>
     array (
-<%- if $secure_auth_amount != undef { -%>
       'amount' => <%= $secure_auth_amount -%>,
-<%- } -%>
-<%- if $secure_auth_expire != undef { -%>
       'expire' => <%= $secure_auth_expire -%>,
-<%- } -%>
     ),
   'Session' =>
     array (

@@ -191,16 +191,17 @@ class misp (
 
   ## SecureAuth section
   # (critical)
-  Optional[Integer] $secure_auth_amount = undef,
-  Optional[Integer] $secure_auth_expire = undef,
+  Integer $secure_auth_amount = undef,
+  Integer $secure_auth_expire = undef,
 
   ## Session section
   # (critical)
   Optional[Boolean] $session_auto_regenerate = undef,
   Optional[Boolean] $session_check_agent = undef,
-  Optional[Enum['php','database','cake','cache']] $session_defaults = undef,
-  Optional[Integer] $session_timeout = undef,
-  Optional[Integer] $session_cookie_timeout = undef,
+  Optional[String] $session_cookie = undef,
+  Enum['php','database','cake','cache'] $session_defaults = 'php',
+  Integer $session_timeout = 60,
+  Integer $session_cookie_timeout = 10080,
 
 
   String $host_org_id = '1',
@@ -209,8 +210,6 @@ class misp (
   Boolean $rh_shell_fix = false,
   String $rh_shell_fix_path = '/opt/rh/rh-php56/root/usr/bin:/opt/rh/rh-php56/root/usr/sbin',
 
-  # # SecureAuth
-  # # Session
   # # Plugin
   Integer $rpz_policy = 0,
   String $rpz_walled_garden = '127.0.0.1',
