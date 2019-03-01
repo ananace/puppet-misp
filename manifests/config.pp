@@ -219,7 +219,7 @@ class misp::config inherits misp {
       'session_defaults'                            => $session_defaults,
       'session_timeout'                             => $session_timeout,
       'session_cookie_timeout'                      => $session_cookie_timeout,
-  }),
+  })
   if $mips::allow_config_changes {
     fail('Not supported at the moment')
   } else {
