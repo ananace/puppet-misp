@@ -169,22 +169,22 @@ $config = array (
   <%- } else { -%>
      'auth'=>array(<%= $auth_method.map |String $method| { "'${method}'" }.join(', ') -%>),
   <%- } -%>
-<%- end -%>
+<%- } -%>
 <%- if $password_policy_length { -%>
      'password_policy_length' => <%= $password_policy_length -%>,
-<%- end -%>
+<%- } -%>
 <%- if $password_policy_complexity { -%>
      'password_policy_complexity' => '<%= $password_policy_complexity -%>',
-<%- end -%>
+<%- } -%>
 <%- if $sanitise_attribute_on_delete { -%>
      'sanitise_attribute_on_delete' => <%= $sanitise_attribute_on_delete -%>,
-<%- end -%>
+<%- } -%>
 <%- if $require_password_confirmation { -%>
      'require_password_confirmation' => <%= $require_password_confirmation -%>,
-<%- end -%>
+<%- } -%>
 <%- if $hide_organisation_index_from_users { -%>
      'hide_organisation_index_from_users' => <%= $hide_organisation_index_from_users -%>,
-<%- end -%>
+<%- } -%>
      ),
   'MISP' =>
     array (
