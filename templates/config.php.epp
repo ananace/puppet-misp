@@ -743,9 +743,9 @@ $config = array (
       'GroupTag'          => 'ADFS_GROUP',
       'GroupSeparator'    => ';',
       'GroupRoleMatching' => array(                // 3:User, 1:admin. May be good to set "1" for the first user
-        <% $egroup_role_match.each do |key,value| -%>
-        '<%= key %>' => <%= value %>,
-        <% end %>
+<%- $egroup_role_match.each |$key, $value| { -%>
+        '<%= $key %>' => <%= $value %>,
+<%- } -%>
       ),
       'UseDefaultOrg'     => '<%= $shib_use_default_org -%>',
       'DefaultOrg'        => '<%= $shib_default_org -%>',
