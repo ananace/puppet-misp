@@ -78,7 +78,7 @@ class misp (
   Optional[String] $email = "root@${fact('networking.fqdn')}",
   Optional[Boolean] $disable_emailing = undef,
   Optional[Integer[0,3]] $default_event_distribution = undef,
-  Optional[Variant[Integer[0,3],'event']] $default_attribute_distribution = undef,
+  Optional[Variant[Integer[0,3],Enum['event']]] $default_attribute_distribution = undef,
   Optional[Array] $default_event_tag_collection = undef,
   Optional[Boolean] $proposals_block_attributes = undef,
   Optional[Boolean] $completely_disable_correlation = undef,
