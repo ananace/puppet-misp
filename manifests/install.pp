@@ -120,16 +120,16 @@ class misp::install inherits misp {
       notify  => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini", "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"];
   }
 
-  file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
-    ensure  => file,
-    content => 'extension=redis.so',
-  }
+  # file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
+  #   ensure  => file,
+  #   content => 'extension=redis.so',
+  # }
 
-  file { "/etc/opt/rh/rh-${misp::php_version}/php.d/99-redis.ini":
-    ensure    => link,
-    target    => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini",
-    subscribe => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini"],
-  }
+  # file { "/etc/opt/rh/rh-${misp::php_version}/php.d/99-redis.ini":
+  #   ensure    => link,
+  #   target    => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini",
+  #   subscribe => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini"],
+  # }
 
   file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini":
     ensure  => file,
