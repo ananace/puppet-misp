@@ -3,9 +3,8 @@ class misp::service inherits misp {
   require '::misp::config'
 
   service { "rh-${misp::php_version}-php-fpm":
-    ensure    => 'running',
-    enable    => true,
-    subscribe => File["/etc/opt/rh/rh-${misp::php_version}/php.d/99-redis.ini"]#], #Needs the subscribe, cannot notify a service
+    ensure => 'running',
+    enable => true,
   }
 
   if $misp::manage_haveged {
