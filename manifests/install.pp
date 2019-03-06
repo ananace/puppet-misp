@@ -117,7 +117,7 @@ class misp::install inherits misp {
 
     'CakeResque install':
       command => '/usr/bin/scl enable rh-php71 "php composer.phar install"',
-      notify  => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini", "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"];
+      notify  => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"];
   }
 
   # file { "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/redis.ini":
