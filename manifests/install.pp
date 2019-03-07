@@ -59,34 +59,34 @@ class misp::install inherits misp {
 
   exec {
     default:
-      command     => '/usr/bin/git config core.filemode false && /usr/bin/python3.6 setup.py install',
+      command     => '/usr/bin/git config core.filemode false && scl enable rh-python36 "python3.6 setup.py install"',
       umask       => '0022',
       refreshonly => true;
 
     'python-cybox config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
-      unless    => '/usr/bin/pip3.6 list | grep cybox',
+      unless    => '/usr/bin/pip3 list | grep cybox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
 
     'python-stix config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
-      unless    => '/usr/bin/pip3.6 list | grep stix',
+      unless    => '/usr/bin/pip3 list | grep stix',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
 
     'mixbox config':
       cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
-      unless    => '/usr/bin/pip3.6 list | grep mixbox',
+      unless    => '/usr/bin/pip3 list | grep mixbox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
 
     'python-maec config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
-      unless    => '/usr/bin/pip3.6 list | grep maec',
+      unless    => '/usr/bin/pip3 list | grep maec',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
 
     'pydeep build':
-      command   => '/usr/bin/python3.6 setup.py build && /usr/bin/python3.6 setup.py install',
+      command   => 'scl enable rh-python36 "python3.6 setup.py build && python3.6 setup.py install"',
       cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
-      unless    => '/usr/bin/pip3.6 list | grep pydeep',
+      unless    => '/usr/bin/pip3 list | grep pydeep',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 

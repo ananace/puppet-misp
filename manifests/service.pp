@@ -2,6 +2,20 @@ class misp::service inherits misp {
 
   require '::misp::config'
 
+  file_line {
+    default:
+      notify => Service["rh-${misp::php_version}-php-fpm"];
+
+    'php-fpm enable rh-python36':
+      path => "/etc/opt/rh/rh-${misp::php_version}/sysconfig/php-fpm",
+      line => 'source scl_source enable rh-python36';
+
+    'php-fpm no clear_env':
+      path  => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/www.conf",
+      line  => 'clear_env = no',
+      match => '^[; ]*clear_env';
+  }
+
   service { "rh-${misp::php_version}-php-fpm":
     ensure => 'running',
     enable => true,

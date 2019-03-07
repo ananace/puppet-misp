@@ -6,7 +6,6 @@ class misp::dependencies inherits misp {
       'libxslt-devel', 'zlib-devel',
       'php-mbstring', #Required for Crypt_GPG
       'php-pear-crypt-gpg', # Crypto GPG
-      'python36-six', # Python related packages
       'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
 
       "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel", "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", 'php-pear', "rh-${misp::php_version}-php-xml", "rh-${misp::php_version}-php-bcmath", # PHP related packages
@@ -30,11 +29,12 @@ class misp::dependencies inherits misp {
     })
   }
   if $misp::manage_python {
-    ensure_packages( ['python36', 'python36-pip'] )
+    ensure_packages( ['rh-python36', 'rh-python36-python-devel', 'rh-python36-python-pip', 'rh-python36-python-six'] )
+    # To allow for "sanely" installing packages with Puppet
     if !defined(File['/usr/bin/pip3']) {
       file { '/usr/bin/pip3':
         ensure  => link,
-        target  => '/usr/bin/pip3.6',
+        target  => '/opt/rh/rh-python36/bin/pip3.6',
         replace => false,
       }
     }
