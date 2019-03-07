@@ -10,7 +10,7 @@ class misp::dependencies inherits misp {
       'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
 
       "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel", "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", 'php-pear', "rh-${misp::php_version}-php-xml", "rh-${misp::php_version}-php-bcmath", # PHP related packages
-      "sclo-${misp::php_version}-php-pecl-redis", # Redis connection from PHP
+      "sclo-${misp::php_version}-php-pecl-redis4", # Redis connection from PHP
   ] )
 
   ensure_packages( [
