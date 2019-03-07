@@ -23,6 +23,7 @@ class misp (
   #
   Boolean $allow_config_changes = false,
   #
+  Boolean $manage_scl = true,
   String $php_version = 'php71',
   #
   Boolean $manage_haveged = true,

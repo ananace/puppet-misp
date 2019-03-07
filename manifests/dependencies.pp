@@ -20,6 +20,15 @@ class misp::dependencies inherits misp {
       provider => 'pip3',
   })
 
+  if $misp::manage_scl {
+    ensure_resource('package', 'centos-release-scl', {
+        before => Package[
+          "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel",
+          "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", "rh-${misp::php_version}-php-xml",
+          "rh-${misp::php_version}-php-bcmath", "sclo-${misp::php_version}-php-pecl-redis"
+        ],
+    })
+  }
   if $misp::manage_python {
     ensure_packages( ['python36', 'python36-pip'] )
     if !defined(File['/usr/bin/pip3']) {
