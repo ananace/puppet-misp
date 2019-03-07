@@ -24,7 +24,7 @@ class misp (
   Boolean $allow_config_changes = false,
   #
   Boolean $manage_scl = true,
-  String $php_version = 'php71',
+  String $php_version = 'php72',
   #
   Boolean $manage_haveged = true,
   # Whether to manage Python or not. Please note that python dev needs to be
