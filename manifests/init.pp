@@ -197,8 +197,8 @@ class misp (
 
   ## Session section
   # (critical)
-  Optional[Boolean] $session_auto_regenerate = undef,
-  Optional[Boolean] $session_check_agent = undef,
+  Boolean $session_auto_regenerate = undef,
+  Boolean $session_check_agent = undef,
   Optional[String] $session_cookie = undef,
   Enum['php','database','cake','cache'] $session_defaults = 'php',
   Integer $session_timeout = 60,
