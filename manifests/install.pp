@@ -15,7 +15,7 @@ class misp::install inherits misp {
     revision   => $misp::misp_git_tag,
     owner      => $misp::default_user,
     group      => $misp::default_group,
-    notify     => Exec['CakeResque require'],
+    notify     => Exec['Pear install Console_CommandLine', 'Pear install Crypt_GPG', 'CakeResque require'],
   }
 
   exec {'git ignore permissions':
@@ -90,6 +90,22 @@ class misp::install inherits misp {
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 
+  $run_php = "/usr/bin/scl enable rh-${misp::php_version}"
+
+  ## Pears
+  #
+
+  exec {
+    default:
+      cwd         => "${misp::install_dir}/",
+      refreshonly => true;
+
+    'Pear install Console_CommandLine':
+      command => "${run_php} 'pear install ${misp::install_dir}/INSTALL/dependencies/Console_CommandLine/package.xml'";
+
+    'Pear install Crypt_GPG':
+      command => "${run_php} 'pear install ${misp::install_dir}/INSTALL/dependencies/Crypt_GPG/package.xml'";
+  }
 
   ## CakePHP
   #
@@ -108,15 +124,15 @@ class misp::install inherits misp {
       refreshonly => true;
 
     'CakeResque require':
-      command => '/usr/bin/scl enable rh-php71 "php composer.phar require kamisama/cake-resque:4.1.2"',
+      command => "${run_php} 'php composer.phar require kamisama/cake-resque:4.1.2'",
       notify  => Exec['CakeResque config'];
 
     'CakeResque config':
-      command => '/usr/bin/scl enable rh-php71 "php composer.phar config vendor-dir Vendor"',
+      command => "${run_php} 'php composer.phar config vendor-dir Vendor'",
       notify  => Exec['CakeResque install'];
 
     'CakeResque install':
-      command => '/usr/bin/scl enable rh-php71 "php composer.phar install"',
+      command => "${run_php} 'php composer.phar install'",
       notify  => File["/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/timezone.ini"];
   }
 
