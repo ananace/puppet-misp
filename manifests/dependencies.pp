@@ -22,15 +22,6 @@ class misp::dependencies inherits misp {
     })
   }
   if $misp::manage_python {
-    # class { '::python':
-    #   version    => 'rh-python36-python',
-    #   pip        => present,
-    #   dev        => present,
-    #   virtualenv => present,
-    #   manage_scl => false,
-    #   use_epel   => false,
-    #   provider   => 'scl',
-    # }
     ensure_packages( ['rh-python36', 'rh-python36-python-devel', 'rh-python36-python-pip', 'rh-python36-python-six'] )
   }
   if $misp::manage_haveged {

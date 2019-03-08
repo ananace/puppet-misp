@@ -46,12 +46,10 @@ class misp::install inherits misp {
     user    => $misp::default_user,
   }
 
-  $venv = "${misp::venv_dir}/bin/"
-
   exec {
     default:
       umask   => '0022',
-      path    => [ $venv ],
+      path    => [ "${misp::venv_dir}/bin" ],
       user    => $misp::default_user,
       require => Exec['Create virtualenv'];
 
@@ -106,35 +104,35 @@ class misp::install inherits misp {
 
   exec {
     default:
-      command     => "/usr/bin/git config core.filemode false && ${venv}/bin/python setup.py install",
+      command     => "/usr/bin/git config core.filemode false && ${misp::venv_dir}/bin/python setup.py install",
       umask       => '0022',
       refreshonly => true,
       require     => Exec['Create virtualenv'];
 
     'python-cybox config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
-      unless    => "${venv}/bin/pip3 list | /bin/grep cybox",
+      unless    => "${misp::venv_dir}/bin/pip3 list | /bin/grep cybox",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
 
     'python-stix config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
-      unless    => "${venv}/bin/pip3 list | /bin/grep stix",
+      unless    => "${misp::venv_dir}/bin/pip3 list | /bin/grep stix",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
 
     'mixbox config':
       cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
-      unless    => "${venv}/bin/pip3 list | /bin/grep mixbox",
+      unless    => "${misp::venv_dir}/bin/pip3 list | /bin/grep mixbox",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
 
     'python-maec config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
-      unless    => "${venv}/bin/pip3 list | /bin/grep maec",
+      unless    => "${misp::venv_dir}/bin/pip3 list | /bin/grep maec",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
 
     'pydeep build':
-      command   => "${venv}/bin/python setup.py build && ${venv}/bin/python setup.py install",
+      command   => "${misp::venv_dir}/bin/python setup.py build && ${misp::venv_dir}/bin/python setup.py install",
       cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
-      unless    => "${venv}/bin/pip3 list | /bin/grep pydeep",
+      unless    => "${misp::venv_dir}/bin/pip3 list | /bin/grep pydeep",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 
