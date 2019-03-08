@@ -4,11 +4,9 @@ class misp::dependencies inherits misp {
       'git', # Needed for pulling the MISP code and those for some dependencies
       'zip', 'mariadb',
       'libxslt-devel', 'zlib-devel',
-      'php-mbstring', #Required for Crypt_GPG
-      'php-pear-crypt-gpg', # Crypto GPG
       'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
 
-      "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel", "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", 'php-pear', "rh-${misp::php_version}-php-xml", "rh-${misp::php_version}-php-bcmath", # PHP related packages
+      "rh-${misp::php_version}", "rh-${misp::php_version}-php-fpm", "rh-${misp::php_version}-php-devel", "rh-${misp::php_version}-php-mysqlnd", "rh-${misp::php_version}-php-mbstring", "rh-${misp::php_version}-php-pear", "rh-${misp::php_version}-php-xml", "rh-${misp::php_version}-php-bcmath", # PHP related packages
       "sclo-${misp::php_version}-php-pecl-redis4", # Redis connection from PHP
   ] )
 
