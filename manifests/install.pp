@@ -61,6 +61,14 @@ class misp::install inherits misp {
       command => 'pip install python-magic',
       unless  => 'pip freeze --all | /bin/grep python-magic';
 
+    'enum34':
+      command => 'pip install enum34',
+      unless  => 'pip freeze --all | /bin/grep enum34';
+
+    'lief':
+      command => 'pip install lief',
+      unless  => 'pip freeze --all | /bin/grep lief';
+
     'lxml':
       command => 'pip install lxml',
       unless  => 'pip freeze --all | /bin/grep lxml';
