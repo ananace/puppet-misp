@@ -28,11 +28,6 @@ class misp::dependencies inherits misp {
 
   if $misp::pymisp_rpm {
     ensure_packages( ['pymisp'] )
-  } else {
-    ensure_packages( ['pymisp'], {
-        'ensure'   => 'present',
-        'provider' => 'pip3',
-    })
   }
 
   if $misp::lief {

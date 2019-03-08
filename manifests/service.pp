@@ -4,6 +4,7 @@ class misp::service inherits misp {
 
   file_line {
     default:
+      path   => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/www.conf",
       notify => Service["rh-${misp::php_version}-php-fpm"];
 
     'php-fpm enable rh-python36':
@@ -11,9 +12,28 @@ class misp::service inherits misp {
       line => 'source scl_source enable rh-python36';
 
     'php-fpm no clear_env':
-      path  => "/etc/opt/rh/rh-${misp::php_version}/php-fpm.d/www.conf",
       line  => 'clear_env = no',
       match => '^[; ]*clear_env';
+
+    'php-fpm env[PATH]':
+      line  => "env[PATH] = /opt/rh/rh-${misp::php_version}/root/usr/bin:/opt/rh/rh-${misp::php_version}/root/usr/sbin:/opt/rh/rh-python36/root/usr/bin",
+      match => '^env[PATH] =';
+
+    'php-fpm env[LD_LIBRARY_PATH]':
+      line  => "env[LD_LIBRARY_PATH] = /opt/rh/rh-${misp::php_version}/root/usr/lib64:/opt/rh/rh-python36/root/usr/lib64",
+      match => '^env[LD_LIBRARY_PATH] =';
+
+    'php-fpm env[MANPATH]':
+      line  => "env[MANPATH] = /opt/rh/rh-${misp::php_version}/root/usr/share/man:/opt/rh/rh-python36/root/usr/share/man",
+      match => '^env[MANPATH] =';
+
+    'php-fpm env[PKG_CONFIG_PATH]':
+      line  => 'env[PKG_CONFIG_PATH] = /opt/rh/rh-python36/root/usr/lib64/pkgconfig',
+      match => '^env[PKG_CONFIG_PATH] =';
+
+    'php-fpm env[XDG_DATA_DIRS]':
+      line  => 'env[XDG_DATA_DIRS] = /opt/rh/rh-python36/root/usr/share',
+      match => '^env[XDG_DATA_DIRS] =';
   }
 
   service { "rh-${misp::php_version}-php-fpm":
