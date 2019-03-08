@@ -17,6 +17,16 @@ class misp::install inherits misp {
     group      => $misp::default_group,
     notify     => Exec['Pear install Console_CommandLine', 'Pear install Crypt_GPG', 'CakeResque require'],
   }
+  # To stop the diagnostics complaints in MISP
+  file { "${misp::install_dir}/.git/ORIG_HEAD":
+    ensure  => file,
+    content => '',
+    owner   => $misp::default_user,
+    group   => $misp::default_group,
+    seltype => 'httpd_sys_rw_content_t',
+    replace => false,
+    require => Vcsrepo[$misp::install_dir],
+  }
 
   exec {'git ignore permissions':
     command     => '/usr/bin/git config core.filemode false',
@@ -29,6 +39,28 @@ class misp::install inherits misp {
 
   ## Python plugins
   #
+
+  python::pyvenv { $misp::venv_dir:
+    ensure  => present,
+    version => '3.6',
+    owner   => $misp::default_user,
+    group   => $misp::default_group,
+    path    => ['/opt/rh/rh-python36/root/bin/', '/opt/rh/rh-python36/root/usr/bin/', '/opt/rh/rh-python36/root/usr/sbin/'],
+  }
+
+  python::pip {
+    default:
+      virtualenv => $misp::venv_dir,
+      owner      => $misp::default_user,
+      group      => $misp::default_group;
+
+    'python-dateutil':;
+    'python-magic':;
+    'lxml':;
+    'siz':;
+    'zmq':;
+  }
+
 
   vcsrepo {
     default:
@@ -57,36 +89,39 @@ class misp::install inherits misp {
       revision => $misp::pydeep_git_tag;
   }
 
+  $venv = "${misp::install_dir}/venv/bin/"
+
   exec {
     default:
-      command     => '/usr/bin/git config core.filemode false && /usr/bin/scl enable rh-python36 "python3.6 setup.py install"',
+      command     => "/usr/bin/git config core.filemode false && ${venv}/bin/python setup.py install",
       umask       => '0022',
-      refreshonly => true;
+      refreshonly => true,
+      require     => Exec['Create virtualenv'];
 
     'python-cybox config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
-      unless    => '/usr/bin/pip3 list | /bin/grep cybox',
+      unless    => "${venv}/bin/pip3 list | /bin/grep cybox",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
 
     'python-stix config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
-      unless    => '/usr/bin/pip3 list | /bin/grep stix',
+      unless    => "${venv}/bin/pip3 list | /bin/grep stix",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
 
     'mixbox config':
       cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
-      unless    => '/usr/bin/pip3 list | /bin/grep mixbox',
+      unless    => "${venv}/bin/pip3 list | /bin/grep mixbox",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
 
     'python-maec config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
-      unless    => '/usr/bin/pip3 list | /bin/grep maec',
+      unless    => "${venv}/bin/pip3 list | /bin/grep maec",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
 
     'pydeep build':
-      command   => '/usr/bin/scl enable rh-python36 "python3.6 setup.py build && python3.6 setup.py install"',
+      command   => "${venv}/bin/python setup.py build && ${venv}/bin/python setup.py install",
       cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
-      unless    => '/usr/bin/pip3 list | /bin/grep pydeep',
+      unless    => "${venv}/bin/pip3 list | /bin/grep pydeep",
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 

@@ -46,6 +46,7 @@ class misp (
   ## MISP puppet configuration
   Stdlib::Unixpath $install_dir = '/var/www/MISP/',
   Stdlib::Unixpath $config_dir = '/var/www/MISP/app/Config/',
+  Stdlib::Unixpath $venv_dir = "${install_dir}/venv",
   String $timezone = 'UTC',
   String $default_user = 'apache',
   String $default_group = 'apache',
@@ -90,7 +91,7 @@ class misp (
   Integer $redis_database = 13,
   Optional[String] $redis_password = undef,
   # (recommended)
-  Optional[Stdlib::Unixpath] $python_bin = undef,
+  Optional[Stdlib::Unixpath] $python_bin = "${venv_dir}/bin/python",
   Optional[Boolean] $disable_auto_logout = undef,
   Optional[Integer[1,100]] $ssdeep_correlation_threshold = undef,
   Optional[Integer] $max_correlations_per_event = undef,

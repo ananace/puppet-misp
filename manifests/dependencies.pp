@@ -12,13 +12,6 @@ class misp::dependencies inherits misp {
       "sclo-${misp::php_version}-php-pecl-redis4", # Redis connection from PHP
   ] )
 
-  ensure_packages( [
-      'python-magic',
-      'lxml', 'python-dateutil', 'zmq'
-    ], {
-      provider => 'pip3',
-  })
-
   if $misp::manage_scl {
     ensure_resource('package', 'centos-release-scl', {
         before => Package[
@@ -29,15 +22,16 @@ class misp::dependencies inherits misp {
     })
   }
   if $misp::manage_python {
-    ensure_packages( ['rh-python36', 'rh-python36-python-devel', 'rh-python36-python-pip', 'rh-python36-python-six'] )
-    # To allow for "sanely" installing packages with Puppet
-    if !defined(File['/usr/bin/pip3']) {
-      file { '/usr/bin/pip3':
-        ensure  => link,
-        target  => '/opt/rh/rh-python36/bin/pip3.6',
-        replace => false,
-      }
+    class { '::python':
+      version    => 'rh-python36-python',
+      pip        => present,
+      dev        => present,
+      virtualenv => present,
+      manage_scl => false,
+      use_epel   => false,
+      provider   => 'scl',
     }
+    ensure_packages( ['rh-python36', 'rh-python36-python-devel', 'rh-python36-python-pip', 'rh-python36-python-six'] )
   }
   if $misp::manage_haveged {
     ensure_packages( ['haveged'] )
