@@ -40,25 +40,40 @@ class misp::install inherits misp {
   ## Python plugins
   #
 
-  python::pyvenv { $misp::venv_dir:
-    ensure  => present,
-    version => '3.6',
-    owner   => $misp::default_user,
-    group   => $misp::default_group,
-    path    => ['/opt/rh/rh-python36/root/bin/', '/opt/rh/rh-python36/root/usr/bin/', '/opt/rh/rh-python36/root/usr/sbin/'],
+  exec { 'Create virtualenv':
+    command => "scl enable rh-python36 'python -m venv ${misp::venv_dir}'",
+    creates => "${misp::venv_dir}/bin/activate",
+    user    => $misp::default_user,
   }
 
-  python::pip {
-    default:
-      virtualenv => $misp::venv_dir,
-      owner      => $misp::default_user,
-      group      => $misp::default_group;
+  $venv = "${misp::venv_dir}/bin/"
 
-    'python-dateutil':;
-    'python-magic':;
-    'lxml':;
-    'siz':;
-    'zmq':;
+  exec {
+    default:
+      umask   => '0022',
+      path    => [ $venv ],
+      user    => $misp::default_user,
+      require => Exec['Create virtualenv'];
+
+    'python-dateutil':
+      command => 'pip install python-dateutil',
+      unless  => 'pip freeze --all | /bin/grep python-dateutil';
+
+    'python-magic':
+      command => 'pip install python-magic',
+      unless  => 'pip freeze --all | /bin/grep python-magic';
+
+    'lxml':
+      command => 'pip install lxml',
+      unless  => 'pip freeze --all | /bin/grep lxml';
+
+    'siz':
+      command => 'pip install six',
+      unless  => 'pip freeze --all | /bin/grep six';
+
+    'zmq':
+      command => 'pip install zmq',
+      unless  => 'pip freeze --all | /bin/grep zmq';
   }
 
 
@@ -88,8 +103,6 @@ class misp::install inherits misp {
       source   => $misp::pydeep_git_repo,
       revision => $misp::pydeep_git_tag;
   }
-
-  $venv = "${misp::install_dir}/venv/bin/"
 
   exec {
     default:
