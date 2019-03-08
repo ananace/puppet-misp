@@ -44,6 +44,7 @@ class misp::install inherits misp {
     command => "/usr/bin/scl enable rh-python36 'python -m venv ${misp::venv_dir}'",
     creates => "${misp::venv_dir}/bin/activate",
     user    => $misp::default_user,
+    require => Vcsrepo[$misp::install_dir],
   }
 
   exec {
