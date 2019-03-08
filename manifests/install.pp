@@ -73,6 +73,10 @@ class misp::install inherits misp {
       command => 'pip install zmq',
       unless  => 'pip freeze --all | /bin/grep zmq';
 
+    'stix2 v1.1.1':
+      command => 'pip install stix2==1.1.1',
+      unless  => 'pip freeze --all | /bin/grep stix2==1.1.1';
+
     'pymisp':
       command => 'pip install pymisp',
       unless  => 'pip freeze --all | /bin/grep pymisp';

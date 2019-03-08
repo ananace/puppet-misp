@@ -13,13 +13,13 @@ class misp (
   String $stix_git_repo = 'https://github.com/STIXProject/python-stix.git',
   String $stix_git_tag = 'v1.2.0.6',
   String $cybox_git_repo = 'https://github.com/CybOXProject/python-cybox.git',
-  String $cybox_git_tag = 'v2.1.0.17',
+  String $cybox_git_tag = '85f975a89119e63bc2d7a67513b0f18e358c468f', # MISP requires an unreleased version
   String $mixbox_git_repo = 'https://github.com/CybOXProject/mixbox.git',
   String $mixbox_git_tag = 'v1.0.3',
   String $maec_git_repo = 'https://github.com/MAECProject/python-maec.git',
   String $maec_git_tag = 'v4.1.0.14',
   String $pydeep_git_repo = 'https://github.com/kbandla/pydeep.git',
-  String $pydeep_git_tag = 'e4ce348566293475016ca7fa9fb7fc4f61f1997f', # Using SHA from latest commit in 0.2 tag, because there is also a 0.2 branch
+  String $pydeep_git_tag = '60b0a00ba7f30cfa21ff92d871799685bc612cad',
   #
   Boolean $allow_config_changes = false,
   #
