@@ -72,6 +72,10 @@ class misp::install inherits misp {
     'zmq':
       command => 'pip install zmq',
       unless  => 'pip freeze --all | /bin/grep zmq';
+
+    'pymisp':
+      command => 'pip install pymisp',
+      unless  => 'pip freeze --all | /bin/grep pymisp';
   }
 
 
@@ -104,34 +108,35 @@ class misp::install inherits misp {
 
   exec {
     default:
-      command => "/usr/bin/git config core.filemode false && ${misp::venv_dir}/bin/python setup.py install",
+      command => '/usr/bin/git config core.filemode false && python3 setup.py install',
+      path    => ["${misp::venv_dir}/bin", '/usr/bin', '/bin'],
       umask   => '0022',
       require => Exec['Create virtualenv'];
 
     'python-cybox config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
-      unless    => "${misp::venv_dir}/bin/pip3 freeze | /bin/grep cybox",
+      unless    => 'pip freeze | /bin/grep cybox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
 
     'python-stix config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
-      unless    => "${misp::venv_dir}/bin/pip3 freeze | /bin/grep stix",
+      unless    => 'pip freeze | /bin/grep stix',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
 
     'mixbox config':
       cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
-      unless    => "${misp::venv_dir}/bin/pip3 freeze | /bin/grep mixbox",
+      unless    => 'pip freeze | /bin/grep mixbox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
 
     'python-maec config':
       cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
-      unless    => "${misp::venv_dir}/bin/pip3 freeze | /bin/grep maec",
+      unless    => 'pip freeze | /bin/grep maec',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
 
     'pydeep build':
-      command   => "${misp::venv_dir}/bin/python setup.py build && ${misp::venv_dir}/bin/python setup.py install",
+      command   => 'python3 setup.py build && python3 setup.py install',
       cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
-      unless    => "${misp::venv_dir}/bin/pip3 freeze | /bin/grep pydeep",
+      unless    => 'pip freeze | /bin/grep pydeep',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/pydeep"];
   }
 
