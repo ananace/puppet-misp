@@ -134,9 +134,8 @@ class misp::install inherits misp {
 
     exec {
       default:
-        cwd         => "${misp::install_dir}/app/files/scripts/lief/build",
-        user        => $misp::default_user,
-        refreshonly => true;
+        cwd  => "${misp::install_dir}/app/files/scripts/lief/build",
+        user => $misp::default_user;
 
       'ensure build dir':
         cwd     => '/',
@@ -146,18 +145,21 @@ class misp::install inherits misp {
 
       'set up LIEF build':
         command   => '/usr/bin/scl enable devtoolset-7 rh-python36 "bash -c \'cmake3 -DLIEF_PYTHON_API=ON -DLIEF_DOC=OFF -DLIEF_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DPYTHON_VERSION=3.6 ..\'"',
+        creates   => "${misp::install_dir}/app/files/scripts/lief/build/CMakeCache.txt",
         require   => Exec['ensure build dir'],
         subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"];
 
       'compile LIEF':
-        command   => '/usr/bin/make -j$(nproc)',
-        subscribe => Exec['set up LIEF build'];
+        refreshonly => true,
+        command     => '/usr/bin/make -j$(nproc)',
+        subscribe   => Exec['set up LIEF build'];
 
       'install LIEF':
-        path      => [ "${misp::venv_dir}/bin" ],
-        command   => 'python3 setup.py install',
-        subscribe => Exec['compile LIEF'],
-        require   => Exec['Create virtualenv'];
+        refreshonly => true,
+        path        => [ "${misp::venv_dir}/bin" ],
+        command     => 'python3 setup.py install',
+        subscribe   => Exec['compile LIEF'],
+        require     => Exec['Create virtualenv'];
     }
   }
 
