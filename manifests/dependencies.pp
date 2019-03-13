@@ -2,7 +2,7 @@ class misp::dependencies inherits misp {
   ensure_packages( [
       'gcc', # Needed for compiling Python modules
       'git', # Needed for pulling the MISP code and those for some dependencies
-      'zip', 'mariadb',
+      'zip',
       'libxslt-devel', 'zlib-devel',
       'ssdeep', 'ssdeep-libs', 'ssdeep-devel', #For pydeep
 
@@ -10,6 +10,9 @@ class misp::dependencies inherits misp {
       "sclo-${misp::php_version}-php-pecl-redis4", # Redis connection from PHP
   ] )
 
+  if $misp::install_mariadb {
+    ensure_resource('package', $misp::mariadb_scl, {})
+  }
   if $misp::manage_scl {
     ensure_resource('package', 'centos-release-scl', {
         before => Package[

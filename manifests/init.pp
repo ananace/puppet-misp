@@ -23,6 +23,9 @@ class misp (
   #
   Boolean $allow_config_changes = false,
   #
+  Boolean $install_mariadb = true,
+  Optional[String] $mariadb_scl = 'rh-mariadb102',
+  String $mariadb_service = 'rh-mariadb102-mariadb',
   Boolean $manage_scl = true,
   String $php_version = 'php72',
   #
