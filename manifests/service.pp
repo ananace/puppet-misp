@@ -36,6 +36,28 @@ class misp::service inherits misp {
       match => '^env[XDG_DATA_DIRS] =';
   }
 
+  file_line {
+    default:
+      path   => "/etc/opt/rh/rh-${misp::php_version}/php.ini",
+      notify => Service["rh-${misp::php_version}-php-fpm"];
+
+    'php max_execution_time':
+      line  => 'max_execution_time = 300',
+      match => '^max_execution_time ';
+
+    'php memory_limit':
+      line  => 'memory_limit = 512M',
+      match => '^memory_limit ';
+
+    'php upload_max_filesize':
+      line  => 'upload_max_filesize = 50M',
+      match => '^upload_max_filesize ';
+
+    'php post_max_size':
+      line  => 'post_max_size = 50M',
+      match => '^post_max_size ';
+  }
+
   service { "rh-${misp::php_version}-php-fpm":
     ensure => 'running',
     enable => true,
