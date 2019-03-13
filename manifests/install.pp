@@ -136,8 +136,7 @@ class misp::install inherits misp {
       default:
         cwd         => "${misp::install_dir}/app/files/scripts/lief/build",
         user        => $misp::default_user,
-        refreshonly => true,
-        require     => File["${misp::install_dir}/app/files/scripts/lief/build"];
+        refreshonly => true;
 
       'ensure build dir':
         cwd     => '/',
