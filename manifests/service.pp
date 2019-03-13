@@ -68,7 +68,7 @@ class misp::service inherits misp {
         group       => $misp::default_group,
         php_version => $misp::php_version,
         services    => [$misp::mariadb_service, 'redis'],
-        scls        => [$misp::mariadb_scl],
+        scls        => $misp::worker_scls,
     }),
     notify  => Service['misp-workers'],
   }
