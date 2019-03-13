@@ -3,8 +3,8 @@
   String $user,
   String $group,
   Stdlib::Unixpath $install_dir,
-  Array[String] $services = []
-  Array[String] $scls = []
+  Array[String] $services = [],
+  Array[String] $scls = [],
   | -%>
 [Unit]
 Description=MISP's background workers
