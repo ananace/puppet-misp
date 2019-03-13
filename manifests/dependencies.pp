@@ -34,7 +34,7 @@ class misp::dependencies inherits misp {
   }
 
   if $misp::build_lief {
-    ensoure_resource('package', ['devtoolset-7', 'cmake3'], {})
+    ensure_resource('package', ['devtoolset-7', 'cmake3'], {})
   }
   elsif $misp::lief {
     ensure_packages( [$misp::lief_package_name] )
