@@ -154,7 +154,7 @@ class misp::install inherits misp {
         path      => [ "${misp::venv_dir}/bin" ],
         command   => 'python3 setup.py install',
         subscribe => Exec['compile LIEF'],
-        require   => Evex['Create virtualenv'];
+        require   => Exec['Create virtualenv'];
     }
   }
 
