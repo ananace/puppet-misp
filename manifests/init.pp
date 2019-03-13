@@ -27,6 +27,7 @@ class misp (
   String $mariadb_service = 'rh-mariadb102-mariadb',
   Boolean $manage_scl = true,
   Array[String] $worker_scls = ['rh-mariadb102'],
+  String $redis_service = 'redis',
   String $php_version = 'php72',
   #
   Boolean $manage_haveged = true,
