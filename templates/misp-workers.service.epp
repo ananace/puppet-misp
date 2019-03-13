@@ -8,7 +8,7 @@
   | -%>
 [Unit]
 Description=MISP's background workers
-After=rh-<%= $php_version %>-php-fpm.service <%= $services.join(' ') -%>
+After=rh-<%= $php_version %>-php-fpm.service <%= $services.map |$s| { "${s}.service" }.join(' ') -%>
 
 [Service]
 Type=forking
