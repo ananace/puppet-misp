@@ -132,13 +132,6 @@ class misp::install inherits misp {
       force    => false,
     }
 
-    file { "${misp::install_dir}/app/files/scripts/lief/build":
-      ensure  => directory,
-      owner   => $misp::default_user,
-      group   => $misp::default_group,
-      require => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"],
-    }
-
     exec {
       default:
         cwd         => "${misp::install_dir}/app/files/scripts/lief/build",
@@ -146,8 +139,15 @@ class misp::install inherits misp {
         refreshonly => true,
         require     => File["${misp::install_dir}/app/files/scripts/lief/build"];
 
+      'ensure build dir':
+        cwd     => '/',
+        command => "/bin/mkdir '${misp::install_dir}/app/files/scripts/lief/build'",
+        creates => "${misp::install_dir}/app/files/scripts/lief/build",
+        require => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"];
+
       'set up LIEF build':
         command   => '/usr/bin/scl enable devtoolset-7 rh-python36 "bash -c \'cmake3 -DLIEF_PYTHON_API=ON -DLIEF_DOC=OFF -DLIEF_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DPYTHON_VERSION=3.6\'"',
+        require   => Exec['ensure build dir'],
         subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"];
 
       'compile LIEF':
