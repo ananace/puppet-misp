@@ -20,6 +20,8 @@ class misp (
   String $maec_git_tag = 'v4.1.0.14',
   String $pydeep_git_repo = 'https://github.com/kbandla/pydeep.git',
   String $pydeep_git_tag = '60b0a00ba7f30cfa21ff92d871799685bc612cad',
+  String $lief_git_repo = 'https://github.com/lief-project/LIEF.git',
+  String $lief_git_tag = '0.9.0',
   #
   Boolean $allow_config_changes = false,
   #
@@ -36,6 +38,7 @@ class misp (
   Boolean $manage_python = true,
   Boolean $pymisp_rpm = false,
   Boolean $lief = false,
+  Boolean $build_lief = false,
   Optional[String] $lief_package_name = undef,
   # # Services
   String $webservername = 'httpd',

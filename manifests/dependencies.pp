@@ -33,7 +33,10 @@ class misp::dependencies inherits misp {
     ensure_packages( ['pymisp'] )
   }
 
-  if $misp::lief {
+  if $misp::build_lief {
+    ensoure_resource('package', ['devtoolset-7', 'cmake3'], {})
+  }
+  elsif $misp::lief {
     ensure_packages( [$misp::lief_package_name] )
   }
 }

@@ -56,31 +56,31 @@ class misp::install inherits misp {
 
     'python-dateutil':
       command => 'pip install python-dateutil',
-      unless  => 'pip freeze --all | /bin/grep python-dateutil';
+      unless  => 'pip freeze --all | /bin/grep python-dateutil=';
 
     'python-magic':
       command => 'pip install python-magic',
-      unless  => 'pip freeze --all | /bin/grep python-magic';
+      unless  => 'pip freeze --all | /bin/grep python-magic=';
 
     'enum34':
       command => 'pip install enum34',
-      unless  => 'pip freeze --all | /bin/grep enum34';
-
-    'lief':
-      command => 'pip install lief',
-      unless  => 'pip freeze --all | /bin/grep lief';
+      unless  => 'pip freeze --all | /bin/grep enum34=';
 
     'lxml':
       command => 'pip install lxml',
-      unless  => 'pip freeze --all | /bin/grep lxml';
+      unless  => 'pip freeze --all | /bin/grep lxml=';
 
     'siz':
       command => 'pip install six',
-      unless  => 'pip freeze --all | /bin/grep six';
+      unless  => 'pip freeze --all | /bin/grep six=';
 
     'zmq':
       command => 'pip install zmq',
-      unless  => 'pip freeze --all | /bin/grep zmq';
+      unless  => 'pip freeze --all | /bin/grep zmq=';
+
+    'stix':
+      command => 'pip install stix',
+      unless  => 'pip freeze --all | /bin/grep stix=';
 
     'stix2 v1.1.1':
       command => 'pip install stix2==1.1.1',
@@ -88,13 +88,15 @@ class misp::install inherits misp {
 
     'pymisp':
       command => 'pip install pymisp',
-      unless  => 'pip freeze --all | /bin/grep pymisp';
+      unless  => 'pip freeze --all | /bin/grep pymisp=';
   }
 
 
   vcsrepo {
     default:
       ensure   => present,
+      owner    => $misp::default_user,
+      group    => $misp::default_group,
       provider => git,
       force    => false;
 
@@ -117,6 +119,42 @@ class misp::install inherits misp {
     "${misp::install_dir}/app/files/scripts/pydeep":
       source   => $misp::pydeep_git_repo,
       revision => $misp::pydeep_git_tag;
+  }
+
+  if $misp::build_lief {
+    vcsrepo { "${misp::install_dir}/app/files/scripts/lief":
+      owner    => $misp::default_user,
+      group    => $misp::default_group,
+      source   => $misp::lief_git_repo,
+      revision => $misp::lief_git_tag,
+    }
+
+    file { "${misp::install_dir}/app/files/scripts/lief/build":
+      ensure => directory,
+      owner  => $misp::default_user,
+      group  => $misp::default_group,
+    }
+
+    exec {
+      default:
+        cwd         => "${misp::install_dir}/app/files/scripts/lief/build",
+        user        => $misp::default_user,
+        refreshonly => true,
+        require     => File["${misp::install_dir}/app/files/scripts/lief/build"];
+
+      'set up LIEF build':
+        command   => '/usr/bin/scl enable devtoolset-7 rh-python36 "bash -c \'cmake3 -DLIEF_PYTHON_API=ON -DLIEF_DOC=OFF -DLIEF_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DPYTHON_VERSION=3.6\'"',
+        subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"];
+
+      'compile LIEF':
+        command   => '/usr/bin/make -j$(nproc)',
+        subscribe => Exec['set up LIEF build'];
+
+      'install LIEF':
+        path      => [ "${misp::venv_dir}/bin" ],
+        command   => 'python3 setup.py install',
+        subscribe => Exec['compile LIEF'];
+    }
   }
 
   exec {
