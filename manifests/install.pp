@@ -123,16 +123,20 @@ class misp::install inherits misp {
 
   if $misp::build_lief {
     vcsrepo { "${misp::install_dir}/app/files/scripts/lief":
+      ensure   => present,
       owner    => $misp::default_user,
       group    => $misp::default_group,
       source   => $misp::lief_git_repo,
       revision => $misp::lief_git_tag,
+      provider => git,
+      force    => false,
     }
 
     file { "${misp::install_dir}/app/files/scripts/lief/build":
-      ensure => directory,
-      owner  => $misp::default_user,
-      group  => $misp::default_group,
+      ensure  => directory,
+      owner   => $misp::default_user,
+      group   => $misp::default_group,
+      require => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"],
     }
 
     exec {
