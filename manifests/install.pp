@@ -155,16 +155,17 @@ class misp::install inherits misp {
         subscribe => Exec['set up LIEF build'];
 
       'install LIEF':
-        refreshonly => true,
-        cwd         => "${misp::install_dir}/app/files/scripts/lief/build/api/python",
-        path        => [ "${misp::venv_dir}/bin" ],
-        command     => 'python3 setup.py install',
-        subscribe   => Exec['compile LIEF'],
-        require     => Exec['Create virtualenv'];
+        cwd       => "${misp::install_dir}/app/files/scripts/lief/build/api/python",
+        path      => [ "${misp::venv_dir}/bin" ],
+        command   => 'python3 setup.py install',
+        unless    => 'pip freeze --all | /bin/grep lief=',
+        subscribe => Exec['compile LIEF'],
+        require   => Exec['Create virtualenv'];
     }
   }
 
-  exec {
+  Exec <| title == 'install LIEF' |>
+  -> exec {
     default:
       command => '/usr/bin/git config core.filemode false && python3 setup.py install',
       path    => ["${misp::venv_dir}/bin", '/usr/bin', '/bin'],
