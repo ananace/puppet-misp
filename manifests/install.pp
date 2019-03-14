@@ -52,7 +52,7 @@ class misp::install inherits misp {
       umask   => '0022',
       path    => [ "${misp::venv_dir}/bin" ],
       user    => $misp::default_user,
-      require => Exec['Create virtualenv'];
+      require => Exec['Create virtualenv', 'install python-cybox'];
 
     'python-dateutil':
       command => 'pip install python-dateutil',
@@ -170,27 +170,27 @@ class misp::install inherits misp {
       umask   => '0022',
       require => Exec['Create virtualenv'];
 
-    'python-cybox config':
+    'install python-cybox':
       cwd       => "${misp::install_dir}/app/files/scripts/python-cybox/",
       unless    => 'pip freeze | /bin/grep cybox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-cybox"];
 
-    'python-stix config':
+    'install python-stix':
       cwd       => "${misp::install_dir}/app/files/scripts/python-stix/",
       unless    => 'pip freeze | /bin/grep stix',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-stix"];
 
-    'mixbox config':
+    'install mixbox':
       cwd       => "${misp::install_dir}/app/files/scripts/mixbox/",
       unless    => 'pip freeze | /bin/grep mixbox',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/mixbox"];
 
-    'python-maec config':
+    'install python-maec':
       cwd       => "${misp::install_dir}/app/files/scripts/python-maec/",
       unless    => 'pip freeze | /bin/grep maec',
       subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/python-maec"];
 
-    'pydeep build':
+    'install pydeep':
       command   => 'python3 setup.py build && python3 setup.py install',
       cwd       => "${misp::install_dir}/app/files/scripts/pydeep/",
       unless    => 'pip freeze | /bin/grep pydeep',
