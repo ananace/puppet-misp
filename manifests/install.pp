@@ -156,6 +156,7 @@ class misp::install inherits misp {
 
       'install LIEF':
         refreshonly => true,
+        cwd         => "${misp::install_dir}/app/files/scripts/lief/build/api/python",
         path        => [ "${misp::venv_dir}/bin" ],
         command     => 'python3 setup.py install',
         subscribe   => Exec['compile LIEF'],
