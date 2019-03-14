@@ -150,9 +150,9 @@ class misp::install inherits misp {
         subscribe => Vcsrepo["${misp::install_dir}/app/files/scripts/lief"];
 
       'compile LIEF':
-        refreshonly => true,
-        command     => '/usr/bin/make -j$(nproc)',
-        subscribe   => Exec['set up LIEF build'];
+        command   => '/usr/bin/make -j$(nproc)',
+        creates   => "${misp::install_dir}/app/files/scripts/lief/build/api/python/_pylief.so",
+        subscribe => Exec['set up LIEF build'];
 
       'install LIEF':
         refreshonly => true,
