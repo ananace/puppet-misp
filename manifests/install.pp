@@ -154,6 +154,13 @@ class misp::install inherits misp {
         creates   => "${misp::install_dir}/app/files/scripts/lief/build/api/python/_pylief.so",
         subscribe => Exec['set up LIEF build'];
 
+      'uninstall faulty LIEF':
+        path    => [ "${misp::venv_dir}/bin" ],
+        command => 'pip uninstall lief --yes',
+        onlyif  => "strings ${misp::venv_dir}/lib64/python3.6/site-packages/lief-*/_pylief.*.so | grep GLIBCXX_3.4.20",
+        require => Exec['Create virtualenv'],
+        notify  => Exec['install LIEF'];
+
       'install LIEF':
         cwd       => "${misp::install_dir}/app/files/scripts/lief/build/api/python",
         path      => [ "${misp::venv_dir}/bin" ],
